@@ -24,18 +24,18 @@
     "22 11 13  6  5"
     " 2  0 12  3  7"]))
 
-(deftest sample-winning-score
-  (testing "Computes the board score of the sample data winner"
-    (is (= 4512 (t/winning-board-score day04-sample)))))
+(deftest first-winning-board-score
+  (testing "Computes the board score of the first winning bingo card"
+    (is (= 4512 (t/first-winning-board-score day04-sample)))))
 
-;; (deftest gamma-and-epsilon
-;;   (testing "Computes oxygen and co2 values from sample data"
-;;     (is (= [23 10] (t/life-support day04-sample)))))
+(deftest last-winning-board-score
+  (testing "Computes the board score of the last winning bingo card"
+    (is (= 1924 (t/last-winning-board-score day04-sample)))))
 
 (deftest day04-part1-soln
   (testing "Reproduces the answer for day04, part1"
     (is (= 23177 (t/day04-part1-soln)))))
 
-;; (deftest day04-part2-soln
-;;   (testing "Reproduces the answer for day04, part2"
-;;     (is (= 7440311 (t/day04-part2-soln)))))
+(deftest day04-part2-soln
+  (testing "Reproduces the answer for day04, part2"
+    (is (= 6804 (t/day04-part2-soln)))))
