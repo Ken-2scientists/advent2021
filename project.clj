@@ -5,4 +5,4 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [advent-utils "0.1.1"]]
-  :repl-options {:init-ns advent2021.core})
+  :repl-options {:init-ns advent2021.day01})
