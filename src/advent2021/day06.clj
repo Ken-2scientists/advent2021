@@ -9,22 +9,33 @@
 
 (def day06-input (parse (u/puzzle-input "day06-input.txt")))
 
-(defn fish-step
-  [fish]
-  (case fish
-    0 [6 8]
-    [(dec fish)]))
+(defn shift
+  [counts x]
+  (cond
+    (#{0 1 2 3 4 5 7} x) (counts (inc x))
+    (= 6 x)              (+ (counts 0) (counts 7))
+    (= 8 x)              (counts 0)))
 
 (defn step
-  [input]
-  (mapcat fish-step input))
+  [counts]
+  (zipmap (keys counts)
+          (map (partial shift counts) (keys counts))))
 
 (defn fish-after-n-days
   [input days]
-  (-> (iterate step input)
-      (nth days)
-      count))
+  (let [counts (into (zipmap (range 9) (repeat 0)) (frequencies input))
+        final-counts (-> (iterate step counts)
+                         (nth days))]
+    (reduce + (vals final-counts))))
 
 (defn day06-part1-soln
   []
   (fish-after-n-days day06-input 80))
+
+
+(defn day06-part2-soln
+  []
+  (fish-after-n-days day06-input 256))
+
+
+
