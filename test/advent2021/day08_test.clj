@@ -18,15 +18,24 @@
         "egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb"
         "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"]))
 
-
 (deftest total-easy-digits-count
   (testing "Counts all easy digit codes in sample data"
     (is (= 26 (t/total-easy-digits-count day08-sample2)))))
+
+(deftest decode-notes
+  (testing "Can decode the digit codes in sample data"
+    (is (= 5353 (t/decode-notes day08-sample1)))
+    (is (= [8394 9781 1197 9361 4873 8418 4548 1625 8717 4315]
+           (map t/decode-notes day08-sample2))))
+
+  (deftest sum-of-decoded-digits
+    (testing "Can add up all the decoded digits from the sample data"
+      (is (= 61229 (t/sum-of-decoded-digits day08-sample2))))))
 
 (deftest day08-part1-soln
   (testing "Reproduces the answer for day08, part1"
     (is (= 493 (t/day08-part1-soln)))))
 
-;; (deftest day08-part2-soln
-;;   (testing "Reproduces the answer for day08, part2"
-;;     (is (= 99540554 (t/day08-part2-soln)))))
+(deftest day08-part2-soln
+  (testing "Reproduces the answer for day08, part2"
+    (is (= 1010460 (t/day08-part2-soln)))))
