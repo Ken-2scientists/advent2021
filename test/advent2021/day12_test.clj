@@ -52,10 +52,17 @@
     (is (= 19  (count (t/map-cave day12-sample2))))
     (is (= 226 (count (t/map-cave day12-sample3))))))
 
+(deftest count-of-map-paths-part2
+  (testing "Correctly counts the number of unique paths in sample data with part2 logic"
+    (is (= 36   (count (t/map-cave day12-sample1 t/allowed-part2?))))
+    (is (= 103  (count (t/map-cave day12-sample2 t/allowed-part2?))))
+    (is (= 3509 (count (t/map-cave day12-sample3 t/allowed-part2?))))))
+
 (deftest day12-part1-soln
   (testing "Reproduces the answer for day12, part1"
     (is (= 5874 (t/day12-part1-soln)))))
 
+;; Test validated but too slow to run regularly
 ;; (deftest day12-part2-soln
 ;;   (testing "Reproduces the answer for day12, part2"
-;;     (is (= 2380061249 (t/day12-part2-soln)))))
+;;     (is (= 153592 (t/day12-part2-soln)))))

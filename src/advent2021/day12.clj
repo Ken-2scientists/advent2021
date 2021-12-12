@@ -66,21 +66,38 @@
   (or (big-cave? candidate)
       ((complement (set path)) candidate)))
 
+(defn small-cave-quota-used?
+  [path]
+  (->> (filter (complement big-cave?) path)
+       frequencies
+       vals
+       (some #(= 2 %))))
+
+(defn allowed-part2?
+  [path candidate]
+  (and (not= "start" candidate)
+       (or (big-cave? candidate)
+           (if (small-cave-quota-used? path)
+             (<  (count (filter #{candidate} path)) 1)
+             (<= (count (filter #{candidate} path)) 1)))))
+
 (defn end?
   [path]
   (= "end" (last path)))
 
 (defn map-cave-path
-  [graph path]
-  (let [next-nodes  (if (end? path)
-                      []
-                      (->> (get graph (last path))
-                           (filter #(allowed? path %))))]
-    (if (empty? next-nodes)
-      (if (end? path)
-        path
-        nil)
-      (mapcat #(map-cave-path graph (conj path %)) next-nodes))))
+  ([graph path]
+   (map-cave-path graph path allowed?))
+  ([graph path rule]
+   (let [next-nodes  (if (end? path)
+                       []
+                       (->> (get graph (last path))
+                            (filter #(rule path %))))]
+     (if (empty? next-nodes)
+       (if (end? path)
+         path
+         nil)
+       (mapcat #(map-cave-path graph (conj path %) rule) next-nodes)))))
 
 (defn split-by
   "From https://clojuredocs.org/clojure.core/split-with"
@@ -98,9 +115,15 @@
                  (split-by pred ys))))))))
 
 (defn map-cave
-  [graph]
-  (split-by (complement #{"start"}) (map-cave-path graph ["start"])))
+  ([graph]
+   (map-cave graph allowed?))
+  ([graph rule]
+   (split-by (complement #{"start"}) (map-cave-path graph ["start"] rule))))
 
 (defn day12-part1-soln
   []
   (count (map-cave day12-input)))
+
+(defn day12-part2-soln
+  []
+  (count (map-cave day12-input allowed-part2?)))
