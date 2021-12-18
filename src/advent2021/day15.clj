@@ -11,17 +11,8 @@
   [lines]
   (map parse-line lines))
 
-;; TODO: add to common utils
-;; Same function used in day09, day11, and now day15
-(defn grid-of
-  [values]
-  (let [coords (for [y (range (count values))
-                     x (range (count (first values)))]
-                 [x y])]
-    (zipmap coords (flatten values))))
-
 (def day15-sample
-  (grid-of
+  (m/grid-of
    (parse
     ["1163751742"
      "1381373672"
@@ -34,7 +25,7 @@
      "1293138521"
      "2311944581"])))
 
-(def day15-input (grid-of (parse (u/puzzle-input "day15-input.txt"))))
+(def day15-input (m/grid-of (parse (u/puzzle-input "day15-input.txt"))))
 
 ;; TODO: possible better implementation for m/neighbors
 (defn neighbor-graph

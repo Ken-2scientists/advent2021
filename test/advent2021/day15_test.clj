@@ -1,9 +1,10 @@
 (ns advent2021.day15-test
   (:require [clojure.test :refer [deftest testing is]]
+            [advent-utils.maze :as m]
             [advent2021.day15 :as t]))
 
 (def day15-sample
-  (t/grid-of
+  (m/grid-of
    (t/parse
     ["1163751742"
      "1381373672"
@@ -25,10 +26,9 @@
   (testing "Finds the total risk along the safest path in sample data"
     (is (= 40 (t/path-risk day15-sample)))))
 
-;; Correct, but too slow to run as a regular unit test
-;; (deftest day15-part1-soln
-;;   (testing "Reproduces the answer for day15, part1"
-;;     (is (= 508 (t/day15-part1-soln)))))
+(deftest day15-part1-soln
+  (testing "Reproduces the answer for day15, part1"
+    (is (= 508 (t/day15-part1-soln)))))
 
 ;; (deftest day15-part2-soln
 ;;   (testing "Reproduces the answer for day15, part2"
