@@ -1,8 +1,9 @@
 (ns advent2021.day15
   (:require [advent-utils.core :as u]
+            [advent-utils.ascii :as ascii]
             [advent-utils.maze :as m]
             [advent-utils.graph :as g]
-            [advent2021.gridgraph :refer [->GridGraph]]))
+            [advent2021.gridgraph :refer [->GridGraph ->TiledGridGraph]]))
 
 (defn parse-line
   [line]
@@ -42,3 +43,30 @@
 (defn day15-part1-soln
   []
   (path-risk day15-input))
+
+(defn tiled-value
+  [{:keys [width height grid]} [x y]]
+  (let [tilex (quot x width)
+        posx  (mod  x width)
+        tiley (quot y height)
+        posy  (mod  y height)
+        raw   (get grid [posx posy])
+        to-add (mod (+ tilex tiley) 9)
+        adj   (+ raw to-add)]
+    (if (>= adj 10) (mod adj 9) adj)))
+
+(defn tile
+  [{:keys [width height] :as input} count]
+  (let [new-width  (* count width)
+        new-height (* count height)
+        coords (for [y (range new-height)
+                     x (range new-width)]
+                 [x y])]
+    {:width new-width
+     :height new-height
+     :grid
+     (zipmap coords (map (partial tiled-value input) coords))}))
+
+(defn day15-part2-soln
+  []
+  (path-risk (tile day15-input 5)))

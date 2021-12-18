@@ -26,10 +26,14 @@
   (testing "Finds the total risk along the safest path in sample data"
     (is (= 40 (t/path-risk day15-sample)))))
 
+(deftest find-path-risk-tiled
+  (testing "Finds the risk when the values have been tiled per part2 rules"
+    (is (= 315 (t/path-risk (t/tile day15-sample 5))))))
+
 (deftest day15-part1-soln
   (testing "Reproduces the answer for day15, part1"
     (is (= 508 (t/day15-part1-soln)))))
 
-;; (deftest day15-part2-soln
-;;   (testing "Reproduces the answer for day15, part2"
-;;     (is (= 2380061249 (t/day15-part2-soln)))))
+(deftest day15-part2-soln
+  (testing "Reproduces the answer for day15, part2"
+    (is (= 2872 (t/day15-part2-soln)))))
