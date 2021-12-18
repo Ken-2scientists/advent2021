@@ -1,9 +1,10 @@
 (ns advent2021.day09-test
   (:require [clojure.test :refer [deftest testing is]]
+            [advent-utils.maze :as m]
             [advent2021.day09 :as t]))
 
 (def day09-sample
-  (t/grid-of
+  (m/grid-of
    (map t/parse-line
         ["2199943210"
          "3987894921"

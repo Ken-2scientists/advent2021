@@ -6,15 +6,8 @@
   [line]
   (map (comp read-string str) line))
 
-(defn grid-of
-  [values]
-  (let [coords (for [y (range (count values))
-                     x (range (count (first values)))]
-                 [x y])]
-    (zipmap coords (flatten values))))
-
 (def day09-input
-  (grid-of (map parse-line (u/puzzle-input "day09-input.txt"))))
+  (m/grid-of (map parse-line (u/puzzle-input "day09-input.txt"))))
 
 (defn low-point?
   [grid pos]

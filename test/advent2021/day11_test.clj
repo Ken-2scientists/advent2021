@@ -1,5 +1,6 @@
 (ns advent2021.day11-test
   (:require [clojure.test :refer [deftest testing is]]
+            [advent-utils.maze :as m]
             [advent2021.day11 :as t]))
 
 (def day11-sample
@@ -15,7 +16,7 @@
     "4846848554"
     "5283751526"]
    (map t/parse-line)
-   t/grid-of))
+   m/grid-of))
 
 (deftest flashes-after-100-steps
   (testing "Counts total number of flashes after 100 steps in sample data"
