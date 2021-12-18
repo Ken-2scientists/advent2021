@@ -9,7 +9,8 @@
 (def day11-input
   (->> (u/puzzle-input "day11-input.txt")
        (map parse-line)
-       m/grid-of))
+       m/grid-of
+       :grid))
 
 (defn to-flash
   [grid flashed]

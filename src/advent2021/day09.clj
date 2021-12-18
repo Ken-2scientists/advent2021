@@ -7,7 +7,7 @@
   (map (comp read-string str) line))
 
 (def day09-input
-  (m/grid-of (map parse-line (u/puzzle-input "day09-input.txt"))))
+  (:grid (m/grid-of (map parse-line (u/puzzle-input "day09-input.txt")))))
 
 (defn low-point?
   [grid pos]

@@ -16,7 +16,8 @@
     "4846848554"
     "5283751526"]
    (map t/parse-line)
-   m/grid-of))
+   m/grid-of
+   :grid))
 
 (deftest flashes-after-100-steps
   (testing "Counts total number of flashes after 100 steps in sample data"

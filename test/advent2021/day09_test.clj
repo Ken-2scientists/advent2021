@@ -4,13 +4,14 @@
             [advent2021.day09 :as t]))
 
 (def day09-sample
-  (m/grid-of
-   (map t/parse-line
-        ["2199943210"
-         "3987894921"
-         "9856789892"
-         "8767896789"
-         "9899965678"])))
+  (:grid
+   (m/grid-of
+    (map t/parse-line
+         ["2199943210"
+          "3987894921"
+          "9856789892"
+          "8767896789"
+          "9899965678"]))))
 
 (deftest risk-level-sum
   (testing "Adds up the 'risk levels' of the lowest points in sample"

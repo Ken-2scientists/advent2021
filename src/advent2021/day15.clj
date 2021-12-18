@@ -1,7 +1,8 @@
 (ns advent2021.day15
   (:require [advent-utils.core :as u]
             [advent-utils.maze :as m]
-            [advent-utils.graph :as g :refer [Graph ->MapGraph]]))
+            [advent-utils.graph :as g]
+            [advent2021.gridgraph :refer [->GridGraph]]))
 
 (defn parse-line
   [line]
@@ -27,29 +28,11 @@
 
 (def day15-input (m/grid-of (parse (u/puzzle-input "day15-input.txt"))))
 
-;; TODO: possible better implementation for m/neighbors
-(defn neighbor-graph
-  [grid pos]
-  (let [coords (->> (m/adj-coords pos)
-                    (filter (comp some? grid)))
-        values (map grid coords)]
-    (zipmap coords values)))
-
-(defn graph-of
-  [grid]
-  (->MapGraph
-   (zipmap (keys grid)
-           (map (partial neighbor-graph grid) (keys grid)))))
-
-(defn max-pos
-  [grid]
-  (let [maxx (apply max (map first (keys grid)))
-        maxy (apply max (map second (keys grid)))]
-    [maxx maxy]))
-
 (defn find-path-vals
-  [grid]
-  (let [path (g/dijkstra (graph-of grid) [0 0] (max-pos grid))]
+  [{:keys [width height grid] :as input}]
+  (let [start  [0 0]
+        end    [(dec width) (dec height)]
+        path (g/dijkstra (->GridGraph input) start end)]
     (map grid path)))
 
 (defn path-risk
