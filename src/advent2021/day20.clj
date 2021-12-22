@@ -18,16 +18,6 @@
     {:algorithm (mapv char-map (first part1))
      :image (a/ascii->map char-map part2)}))
 
-(def day20-sample
-  (parse
-   ["..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#"
-    ""
-    "#..#."
-    "#...."
-    "##..#"
-    "..#.."
-    "..###"]))
-
 (def day20-input (parse (u/puzzle-input "day20-input.txt")))
 
 ;; TODO variant of adj-coords. Consider consolidating
@@ -43,29 +33,31 @@
   (Integer/parseInt s 2))
 
 (defn next-pixel
-  [{:keys [algorithm image]} pos]
+  [{:keys [algorithm image field]} pos]
   (->> (three-by-cell pos)
-       (map #(get-in image [:grid %] 0))
+       (map #(get-in image [:grid %] field))
        (apply str)
        binstr->int
        (get algorithm)))
 
 (defn enhance
-  [{:keys [image] :as input}]
+  [{:keys [image algorithm field] :as input}]
   (let [{:keys [width height]} image
         coords (for [y (range -1 (+ height 1))
                      x (range -1 (+ width 1))]
                  [x y])
         vals   (map (partial next-pixel input) coords)
         adj-coords (map (fn [[a b]] [(inc a) (inc b)]) coords)]
-    (assoc input :image
-           {:width (+ 2 width)
-            :height (+ 2 height)
-            :grid (zipmap adj-coords vals)})))
+    (assoc input
+           :image {:width (+ 2 width)
+                   :height (+ 2 height)
+                   :grid (zipmap adj-coords vals)}
+           :field (if (zero? field) (get algorithm 0) (get algorithm 511)))))
 
 (defn enhance-n-times
   [input n]
-  (nth (iterate enhance input) n))
+  (let [start (assoc input :field 0)]
+    (nth (iterate enhance start) n)))
 
 (defn illuminated
   [{:keys [image]}]
@@ -78,3 +70,7 @@
 (defn day20-part1-soln
   []
   (illuminated (enhance-n-times day20-input 2)))
+
+(defn day20-part2-soln
+  []
+  (illuminated (enhance-n-times day20-input 50)))
