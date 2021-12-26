@@ -1,11 +1,6 @@
 (ns advent2021.day21
   (:require [advent-utils.core :as u]))
 
-;; Sample data
-;; Player 1 starting position: 4
-;; Player 2 starting position: 8
-(def day21-sample [3 7])
-
 ;; (def day21-input (u/puzzle-input "day21-input.txt"))
 (def day21-input [8 9])
 
@@ -48,3 +43,51 @@
 (defn day21-part1-soln
   []
   (loser-score-times-die-rolls (play-until-win day21-input)))
+
+(def dirac-rolls
+  {3 1
+   4 3
+   5 6
+   6 7
+   7 6
+   8 3
+   9 1})
+
+(defn move
+  [player [[score pos] cnt] [shift shift-cnt]]
+  (let [newpos (mod (+ shift (get pos player)) 10)]
+    {[(update score player + 1 newpos)
+      (assoc pos player newpos)]
+     (* cnt shift-cnt)}))
+
+(defn move-all
+  [player universe]
+  (apply merge-with + (map (partial move player universe) dirac-rolls)))
+
+(def winning-score 21)
+(defn done?
+  [[[score _] _]]
+  (boolean (some #(>= % winning-score) score)))
+
+(defn tally
+  [acc [[[a b] _] cnt]]
+  (if (> a b)
+    (update acc 0 + cnt)
+    (update acc 1 + cnt)))
+
+(defn win-counts
+  [universes player]
+  (let [next-us    (->> universes
+                        (map (partial move-all player))
+                        (apply merge-with +))
+        outcomes   (group-by done? next-us)
+        winners    (get outcomes true)
+        remaining  (into {} (get outcomes false))
+        win-tally  (reduce tally [0 0] winners)]
+    (if (empty? remaining)
+      win-tally
+      (mapv + win-tally (win-counts remaining (mod (inc player) 2))))))
+
+(defn day21-part2-soln
+  []
+  (apply max (win-counts {[[0 0] day21-input] 1} 0)))

@@ -17,10 +17,14 @@
   (testing "Computes the product of the loser score and number of die rolls"
     (is (= 739785 (t/loser-score-times-die-rolls (t/play-until-win day21-sample))))))
 
+(deftest dirac-max-win-count
+  (testing "Computes the number of universes the winner wins in"
+    (is (= 444356092776315 (apply max (t/win-counts {[[0 0] day21-sample] 1} 0))))))
+
 (deftest day21-part1-soln
   (testing "Reproduces the answer for day21, part1"
     (is (= 707784 (t/day21-part1-soln)))))
 
-;; (deftest day21-part2-soln
-;;   (testing "Reproduces the answer for day21, part2"
-;;     (is (= 2380061249 (t/day21-part2-soln)))))
+(deftest day21-part2-soln
+  (testing "Reproduces the answer for day21, part2"
+    (is (= 157595953724471 (t/day21-part2-soln)))))
