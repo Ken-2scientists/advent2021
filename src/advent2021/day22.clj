@@ -4,7 +4,7 @@
 
 (defn parse-bounds
   [bounds]
-  (mapv read-string (str/split (subs bounds 2) #"\.\.")))
+  (update (mapv read-string (str/split (subs bounds 2) #"\.\.")) 1 inc))
 
 (defn parse-coords
   [coords]
@@ -53,30 +53,85 @@
     "on x=967..23432,y=45373..81175,z=27513..53682"]))
 
 (def day22-input (parse (u/puzzle-input "day22-input.txt")))
+(def day22-sample3 (parse (u/puzzle-input "day22-sample3.txt")))
+
+(defn volume
+  [bounds]
+  (reduce * (map #(- (second %) (first %)) bounds)))
+
+(defn identify-splits
+  [cuboids]
+  (let [all-bounds (map :bounds cuboids)
+        dims  (count (first all-bounds))]
+    (for [n (range dims)]
+      (sort (into #{} (mapcat #(nth % n) all-bounds))))))
+
+(defn split-cuboid
+  [[xplanes yplanes zplanes] {:keys [cmd bounds]}]
+  (let [[[x0 x1] [y0 y1] [z0 z1]]  bounds
+        xsplits (filter #(<= x0 % x1) xplanes)
+        ysplits (filter #(<= y0 % y1) yplanes)
+        zsplits (filter #(<= z0 % z1) zplanes)
+        newbounds (for [z (partition 2 1 zsplits)
+                        y (partition 2 1 ysplits)
+                        x (partition 2 1 xsplits)]
+                    [(vec x) (vec y) (vec z)])]
+    (map #(assoc {:cmd cmd} :bounds %) newbounds)))
+
+(defn prepare-geometry
+  [cuboids]
+  (let [splits (identify-splits cuboids)]
+    (mapcat (partial split-cuboid splits) cuboids)))
 
 (defn apply-cmd
   [cubes {:keys [cmd bounds]}]
-  (let [[[x0 x1] [y0 y1] [z0 z1]] bounds
-        changes  (for [z (range z0 (inc z1))
-                       y (range y0 (inc y1))
-                       x (range x0 (inc x1))]
-                   [x y z])]
-    (case cmd
-      :on  (into cubes changes)
-      :off (apply disj cubes changes))))
+  (case cmd
+    :on  (conj cubes bounds)
+    :off (disj cubes bounds)))
+
+(defn on-cubes
+  [cuboids]
+  (->> (prepare-geometry cuboids)
+       (reduce apply-cmd #{})
+       (map volume)
+       (reduce +)))
 
 (defn init-area?
   [{:keys [bounds]}]
   (let [[[x0 x1] [y0 y1] [z0 z1]] bounds]
     (and (>= x0 -50) (>= y0 -50) (>= z0 -50)
-         (<= x1  50) (<= y1  50) (<= z1  50))))
+         (<= x1  51) (<= y1  51) (<= z1  51))))
 
-(defn cubes-in-init-area
-  [input]
-  (->> (filter init-area? input)
-       (reduce apply-cmd #{})
-       count))
+(defn on-cubes-in-init-area
+  [cuboids]
+  (->> (filter init-area? cuboids)
+       on-cubes))
 
 (defn day22-part1-soln
   []
-  (cubes-in-init-area day22-input))
+  (on-cubes-in-init-area day22-input))
+
+(defn intersect-volumes
+  [a-bounds b-bounds]
+  (when (every? identity (map <= (map first b-bounds) (map second a-bounds)))
+    (let [foo (partition 2 (interleave a-bounds b-bounds))]
+      (mapv (fn [[a b]]
+              [(max (first a) (first b))
+               (min (second a) (second b))]) foo))))
+
+;; (defn accumulate
+;;   [{:keys [on on-overlap] :as acc} {:keys [cmd bounds]}]
+;;   (case cmd
+;;     :on (merge acc {:on (conj on bounds)
+;;                     :on-overlap (into on-overlap (map (partial intersect-volumes bounds) on))})))
+
+;; (def sample-2d
+;;   [{:cmd :on :bounds [[0 8] [4 10]]}
+;;    {:cmd :on :bounds [[5 11] [7 13]]}
+;;    {:cmd :on :bounds [[1 3] [0 15]]}
+;;    {:cmd :off :bounds [[5 10] [3 6]]}
+;;    {:cmd :off :bounds [[4 7] [6 9]]}])
+
+(defn day22-part2-soln
+  []
+  (on-cubes day22-input))

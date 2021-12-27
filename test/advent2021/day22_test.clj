@@ -36,8 +36,8 @@
 
 (deftest cubes-in-init-area
   (testing "Computes the cuboids that are 'on' inside the init area"
-    (is (= 39     (t/cubes-in-init-area day22-sample1)))
-    (is (= 590784 (t/cubes-in-init-area day22-sample2)))))
+    (is (= 39     (t/on-cubes-in-init-area day22-sample1)))
+    (is (= 590784 (t/on-cubes-in-init-area day22-sample2)))))
 
 (deftest day22-part1-soln
   (testing "Reproduces the answer for day22, part1"
