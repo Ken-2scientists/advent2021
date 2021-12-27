@@ -59,26 +59,24 @@
            "mod" {:regs (update regs a mod (arg regs b))}
            "eql" {:regs (assoc regs a (if (= (regs a) (arg regs b)) 1 0))})))
 
-(quot 17 26)
-
 (def init-regs {"w" 0 "x" 0 "y" 0 "z" 0})
 (defn prog-execute
   [program input]
   (reduce cmd-execute {:regs init-regs
                        :input input} program))
 
-(defn largest-model-number
-  []
-  (let [candidates (->> (range 99999999999999 11111111111110 -1)
-                        (map str)
-                        (map #(map (comp read-string str) %))
-                        (filter (partial every? pos?)))]
-    (loop [output (prog-execute day24-input (first candidates))
-           remainder (rest candidates)]
-      (if (zero? (get-in output [:regs "z"]))
-        (Long/parseLong (str/join (first remainder)))
-        (recur (prog-execute day24-input (first remainder))
-               (rest remainder))))))
+;; (defn largest-model-number
+;;   []
+;;   (let [candidates (->> (range 99999999999999 11111111111110 -1)
+;;                         (map str)
+;;                         (map #(map (comp read-string str) %))
+;;                         (filter (partial every? pos?)))]
+;;     (loop [output (prog-execute day24-input (first candidates))
+;;            remainder (rest candidates)]
+;;       (if (zero? (get-in output [:regs "z"]))
+;;         (Long/parseLong (str/join (first remainder)))
+;;         (recur (prog-execute day24-input (first remainder))
+;;                (rest remainder))))))
 
 (defn form-a
   [shift {:keys [input]}]
@@ -107,14 +105,20 @@
 (defn char-03 [input] (form-b 0 input))
 (defn char-04 [input] (form-b 13 input))
 (defn char-05 [input] (form-c 14 7 input))
+
 (defn char-06 [input] (form-c 4 11 input))
+
 (defn char-07 [input] (form-b 11 input))
 (defn char-08 [input] (form-c 3 10 input))
+
 (defn char-09 [input] (form-b 16 input))
 (defn char-10 [input] (form-c 12 8 input))
+
 (defn char-11 [input] (form-b 15 input))
 (defn char-12 [input] (form-c 12 2 input))
+
 (defn char-13 [input] (form-c 15 5 input))
+
 (defn char-14 [input] (form-c 12 10 input))
 
 (defn monad
@@ -135,9 +139,67 @@
       char-13
       char-14))
 
-(def largest-input [9 8 9 9 8 5 1 9 5 9 6 9 9 7])
-(monad largest-input)
+(defn chunk-1 [input] (-> {:regs init-regs :input input} char-01 char-02 char-03 char-04 char-05))
+(defn chunk-2 [input] (-> input char-06))
+(defn chunk-3 [input] (-> input char-07 char-08))
+(defn chunk-4 [input] (-> input char-09 char-10))
+(defn chunk-5 [input] (-> input char-11 char-12))
+(defn chunk-6 [input] (-> input char-13))
+(defn chunk-7 [input] (-> input char-14))
 
+(def chunks
+  [[chunk-1 5]
+   [chunk-2 1]
+   [chunk-3 2]
+   [chunk-4 2]
+   [chunk-5 2]
+   [chunk-6 1]
+   [chunk-7 1]])
+
+;; worked this out by hand while iterating through the character logic
+(def largest-input [9 8 9 9 8 5 1 9 5 9 6 9 9 7])
 (defn day24-part1-soln
   []
-  98998519596997)
+  (Long/parseLong (apply str largest-input)))
+
+(defn candidates-with-n-digits
+  [n]
+  (let [s (Long/parseLong (apply str (repeat n 1)))
+        e (inc (Long/parseLong (apply str (repeat n 9))))]
+    (->> (range s e)
+         (map str)
+         (map #(mapv (comp read-string str) %))
+         (filter (partial every? pos?)))))
+
+(defn not-viable?
+  [{:keys [regs]}]
+  (not (zero? (regs "y"))))
+
+(defn append-next-candidates
+  [n candidate]
+  (let [next-candidates (candidates-with-n-digits n)]
+    (map (partial concat candidate) next-candidates)))
+
+
+;; TODO - clean up this rubbish
+(defn smallest-model-number
+  []
+  (let [candidates (candidates-with-n-digits 5)
+        tier1 (remove (comp not-viable? chunk-1) candidates)
+        tier2 (->> (mapcat (partial append-next-candidates 1) tier1)
+                   (remove (comp not-viable? chunk-2 chunk-1)))
+        tier3 (->> (mapcat (partial append-next-candidates 2) tier2)
+                   (remove (comp not-viable? chunk-3 chunk-2 chunk-1)))
+        tier4 (->> (mapcat (partial append-next-candidates 2) tier3)
+                   (remove (comp not-viable? chunk-4 chunk-3 chunk-2 chunk-1)))
+        tier5 (->> (mapcat (partial append-next-candidates 2) tier4)
+                   (remove (comp not-viable? chunk-5 chunk-4 chunk-3 chunk-2 chunk-1)))
+        tier6 (->> (mapcat (partial append-next-candidates 1) tier5)
+                   (remove (comp not-viable? chunk-6 chunk-5 chunk-4 chunk-3 chunk-2 chunk-1)))
+        tier7 (->> (mapcat (partial append-next-candidates 1) tier6)
+                   (remove (comp not-viable? chunk-7 chunk-6 chunk-5 chunk-4 chunk-3 chunk-2 chunk-1)))]
+    tier7))
+
+(defn day24-part2-soln
+  []
+  (Long/parseLong (apply str (first (smallest-model-number)))))

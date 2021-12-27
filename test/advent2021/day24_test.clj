@@ -6,6 +6,6 @@
   (testing "Reproduces the answer for day24, part1"
     (is (= 98998519596997 (t/day24-part1-soln)))))
 
-;; (deftest day24-part2-soln
-;;   (testing "Reproduces the answer for day24, part2"
-;;     (is (= 2380061249 (t/day24-part2-soln)))))
+(deftest day24-part2-soln
+  (testing "Reproduces the answer for day24, part2"
+    (is (= 31521119151421 (t/day24-part2-soln)))))
