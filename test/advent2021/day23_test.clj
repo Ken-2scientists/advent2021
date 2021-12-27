@@ -8,26 +8,26 @@
   ;; "###B#C#B#D###"
   ;; "  #A#D#C#A#  "
   ;; "  #########  "
-  {7  {:type :b}
-   8  {:type :a}
-   9  {:type :c}
-   10 {:type :d}
-   11 {:type :b}
-   12 {:type :c}
-   13 {:type :d}
-   14 {:type :a}})
+  {:a0 {:type :b}
+   :a1 {:type :a}
+   :b0 {:type :c}
+   :b1 {:type :d}
+   :c0 {:type :b}
+   :c1 {:type :c}
+   :d0 {:type :d}
+   :d1 {:type :a}})
 
 (def day23-sample1-soln
-  [[11 2]
-   [9 11]
-   [10 3]
-   [2 10]
-   [7 9]
-   [13 4]
-   [14 5]
-   [4 14]
-   [3 13]
-   [5 7]])
+  [[:c0 :h2]
+   [:b0 :c0]
+   [:b1 :h3]
+   [:h2 :b1]
+   [:a0 :b0]
+   [:d0 :h4]
+   [:d1 :h5]
+   [:h4 :d1]
+   [:h3 :d0]
+   [:h5 :a0]])
 
 (deftest cost-of-moves
   (testing "Computes the costs of the moves identified in sample solution"
