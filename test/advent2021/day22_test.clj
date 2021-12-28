@@ -1,5 +1,6 @@
 (ns advent2021.day22-test
   (:require [clojure.test :refer [deftest testing is]]
+            [advent-utils.core :as u]
             [advent2021.day22 :as t]))
 
 (def day22-sample1
@@ -34,15 +35,22 @@
     "on x=-54112..-39298,y=-85059..-49293,z=-27449..7877"
     "on x=967..23432,y=45373..81175,z=27513..53682"]))
 
+(def day22-sample3 (t/parse (u/puzzle-input "day22-sample3.txt")))
+
 (deftest cubes-in-init-area
   (testing "Computes the cuboids that are 'on' inside the init area"
     (is (= 39     (t/on-cubes-in-init-area day22-sample1)))
-    (is (= 590784 (t/on-cubes-in-init-area day22-sample2)))))
+    (is (= 590784 (t/on-cubes-in-init-area day22-sample2)))
+    (is (= 474140 (t/on-cubes-in-init-area day22-sample3)))))
+
+(deftest cubes-in-large-example
+  (testing "Computes all of the on cubes in a large example"
+    (is (= 2758514936282235 (t/on-cubes day22-sample3)))))
 
 (deftest day22-part1-soln
   (testing "Reproduces the answer for day22, part1"
     (is (= 503864 (t/day22-part1-soln)))))
 
-;; (deftest day22-part2-soln
-;;   (testing "Reproduces the answer for day22, part2"
-;;     (is (= 2380061249 (t/day22-part2-soln)))))
+(deftest day22-part2-soln
+  (testing "Reproduces the answer for day22, part2"
+    (is (= 1255547543528356 (t/day22-part2-soln)))))
